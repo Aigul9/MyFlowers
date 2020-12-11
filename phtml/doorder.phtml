@@ -1,0 +1,66 @@
+<?
+	session_start();
+	$log=$_SESSION["log"];
+	$id=$_SESSION["id"];
+	$id_bask=$_COOKIE["id_bask"];
+	$delivery=$_GET["delivery"];
+	$bonus=$_GET["bonus"];?>
+<?
+	$title="Ваш заказ";
+	include("connect.phtml");
+	
+	if(!isset($log))
+		$message="
+			<table border='1' width='100%' align='right' style='position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)'>
+				<tr>
+					<td align='center'>
+						<b>Вы не авторизованы!</b>
+					</td>
+				</tr>
+			</table>";
+	else
+	{
+		$strSQL1="SELECT COUNT(*) as count FROM basket_bouq WHERE id_bask='".$id_bask."'";
+		$result1=mysql_query($strSQL1) or die("Не получается выполнить запрос к корзине2 :(");
+		$row=mysql_fetch_array($result1);
+		if($row["count"]==0)
+			$message="<table border='1' width='100%' align='right' style='position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)'>
+				<tr>
+					<td align='center'>
+						<b>Ваша корзина пуста :(</b>
+					</td>
+				</tr>
+			</table>";
+		else
+		{
+			$order=uniqid("OR");
+			$strSQL="INSERT INTO orders (id_order, date_order, id_cust, delivery, bonus) VALUES ('".$order."', CURDATE(), ".$id.", '".$delivery."', '".$bonus."')";
+			mysql_query($strSQL) or die("Не получается обратиться к таблице заказов :(");
+		
+			$strSQL="SELECT * FROM basket_bouq WHERE id_bask='".$id_bask."'";
+			$result=mysql_query($strSQL) or die("Не получается обратиться к корзине :(");
+			while ($row=mysql_fetch_array($result))
+			{
+				$strSQL="INSERT INTO order_bouq (id_order, id_bq, kolvo) VALUES ('".$order."', ".$row["id_bq"].", ".$row["kolvo"].")";
+				mysql_query($strSQL) or die("Не получается обратиться к заказам2 :(");
+			}
+	
+			$strSQL="DELETE FROM basket_bouq WHERE id_bask='".$id_bask."'";
+			mysql_query($strSQL) or die("Не получается удалить корзину :(");
+			$uniq_ID=uniqid("ID");
+		
+			setcookie("id_bask", $uniq_ID, time()+60*60*24*14);
+			$message="
+			<table border='1' width='100%' align='right' style='position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)'>
+				<tr>
+					<td align='center'>
+						<b>Ура, Ваш заказ уже в пути!</b>
+					</td>
+				</tr>
+			</table>";
+		}
+	}
+	include("header.phtml");
+	print $message;
+	include("footer.phtml");
+?>

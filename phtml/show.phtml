@@ -1,0 +1,123 @@
+<?
+$id_sup=$_GET["id_sup"];
+$id_type=$_GET["id_type"];
+$type=$_GET["type"];
+session_start();
+
+include("connect.phtml");
+
+if ($type==1)
+{
+	$strSQL1="SELECT country_sup FROM suppliers WHERE id_sup=".$id_sup;
+	$result=mysql_query($strSQL1)
+		or die("Не получается выполнить запрос к таблице suppliers :(");
+	if($row=mysql_fetch_array($result))
+		$title=$row["country_sup"];
+	$strSQL1 = "SELECT id_bq, name_bq, price_bq, comp_bq, image_bq,
+		bouquets.id_type, name_type, bouquets.id_sup, name_sup, country_sup FROM bouquets, suppliers, flowertypes WHERE
+		bouquets.id_type=flowertypes.id_type AND
+		bouquets.id_sup=suppliers.id_sup AND
+		bouquets.id_sup=".$id_sup;
+	$result1=mysql_query($strSQL1)
+		or die("Не получается выполнить запрос!");
+}
+	
+if ($type==2)
+{
+	$strSQL1="SELECT name_type FROM flowertypes WHERE id_type=".$id_type;
+	$result=mysql_query($strSQL1)
+		or die("Не получается выполнить запрос к таблице flowertypes :(");
+	if($row=mysql_fetch_array($result))
+		$title=$row["name_type"];
+	$strSQL1 = "SELECT id_bq, name_bq, price_bq, comp_bq, image_bq,
+		bouquets.id_type, name_type, bouquets.id_sup, name_sup, country_sup FROM bouquets, suppliers, flowertypes WHERE
+		bouquets.id_type=flowertypes.id_type AND
+		bouquets.id_sup=suppliers.id_sup AND		bouquets.id_type=".$id_type;
+	$result1=mysql_query($strSQL1)
+		or die("Не получается выполнить запрос!");
+}
+
+include("header.phtml");
+?>
+	
+<table border="1" width="100%" align="right" style="position:absolute; top:80; left: 0%; background: rgb(216, 191, 216, 0.4)">
+<?
+	while($row=mysql_fetch_array($result1))
+	{?>
+		<tr  style="background: rgb(216, 191, 216, 0.6)">
+			<td align="center" width="20%" style="padding: 5px">
+				<img src="../images1/<?print $row["image_bq"];?>"
+					alt="<?print $row["name_bq"];?>" border="0" width="200">
+				<center>
+					<a href="dobasket.phtml?type=1&id_bq=
+					<?print $row["id_bq"];?>">
+					<font color="black" size=-1>Положить в корзину</font>
+					</a>
+				</center>
+			</td>
+			<td>
+				<table>
+					<tr>
+						<td align="right">
+							<i>Название:</i>
+						</td>
+						<td>
+							<?print $row["name_bq"];?>
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							<i>Страна происхождения:</i>
+						</td>
+						<td>
+							<a href="show.phtml?type=1&id_sup=
+							<?print $row["id_sup"];?>">
+							<?print $row["country_sup"];?></a>
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							<i>Описание:</i>
+						</td>
+						<td>
+							<?print $row["comp_bq"];?>
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							<i>Тип упаковки:</i>
+						</td>
+						<td>
+							<a href="show.phtml?type=2&id_type=
+							<?print $row["id_type"];?>">
+							<?print $row["name_type"];?></a>
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							<i>Цена:</i>
+						</td>
+						<td>
+							<?print $row["price_bq"];?> руб.
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	<?}?>
+</table>
+<?include("footer.phtml");?>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

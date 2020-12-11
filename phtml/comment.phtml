@@ -1,0 +1,47 @@
+<?
+	session_start();
+	$title="Отзывы";
+	$mes=$_POST["mes"];
+	$mes=str_replace('<','&lt;',$mes);				    
+	$mes=str_replace('>','&gt;',$mes);
+	$kto=$_POST["kto"];
+	$kto=str_replace('<','&lt;',$kto);				    
+	$kto=str_replace('>','&gt;',$kto);
+
+	include("header.phtml");
+?>
+	<table cellpadding='2' align='center' width='100%' border='0' style="position:absolute; top:80; left: 0%; background: rgb(216, 191, 216, 0.4)">
+		<tr bgcolor='LightGrey'>
+			<td align="right" width='10%' class=small><i>2019-10-11 18:56:55</i></td>
+			<td align="right" width='20%'><i><?print $kto;?></i></td>
+			<td width='60%'><? print $mes;?></td>
+		</tr>
+		<tr bgcolor='PowderBlue'><td align="right" width='10%' class=small><i>2019-10-11 18:52:59</i></td><td align="right" width='20%'><i>Покупатель</i></td>
+			<td width='60%'>Превосходные букеты! Буду заказывать еще не раз. Спасибо за качество и быструю доставку.</td>
+		</tr>
+		<tr bgcolor='LightGrey'><td align="right" width='10%' class=small><i>2019-10-11 18:51:55</i></td><td align="right" width='20%'><i>Покупатель</i></td>
+			<td width='60%'>Ваш магазин изобилует своим выбором, можно найти букеты на любой вкус. Моя жена осталась довольна. Особенно понравился раздел "Оригинальные" - таких необычных композиций не встретишь в других цветочных магазинах.</td>
+		</tr>
+		<tr bgcolor='PowderBlue'><td align="right" width='10%' class=small><i>2019-10-11 18:51:24</i></td><td align="right" width='20%'><i>Администратор</i></td>
+			<td width='60%'>Тестовое сообщение</td>
+		</tr>
+	</table>
+	<form method="post" action="comment.phtml" name="send" style="position:absolute; bottom: 60; left:30%">
+		<table align="center">
+			<tr>
+				<td align="right">Ваше имя</td><td><input type="text" name=kto size="40"></td>
+			</tr>
+			<tr>
+				<td align="right">Сообщение</td>
+				<td>
+					<textarea cols="50" rows="5" name="mes"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td align="right"></td><td>
+				<input type="submit" name="button" value="OK" onclick=prov()></td>
+			</tr>
+		</table>
+	</form>
+<?include("footer.phtml");
+?>

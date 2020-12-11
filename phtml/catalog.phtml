@@ -1,0 +1,43 @@
+<? $title="Каталог";
+	session_start();
+	include("header.phtml");
+	include("connect.phtml");
+	
+	$strSup = "SELECT * FROM suppliers ORDER BY name_sup";
+	$resultSup = mysql_query($strSup)
+		or die("Не получается выполнить запрос к таблице suppliers :(");
+	$strTypes = "SELECT * FROM flowertypes ORDER BY name_type";
+	$resultTypes = mysql_query($strTypes)
+		or die("Не получается выполнить запрос к таблице flowertypes :(");
+?>
+<table width="100%" style="position:absolute; top:80; left: 0; background: rgb(216, 191, 216, 0.7); height:100%">
+	<tr>
+		<td width="50%" align="center" style="vertical-align: top; padding:30">
+			<font size="+2" color="#381050"><b>Типы упаковок:</b></font>
+			<ul>
+				<? while($row=mysql_fetch_array($resultTypes)){?>
+					<li style="list-style: none"><a href="show.phtml?type=2&id_type=
+						<?print $row["id_type"];?>">
+						<font size="+2" color="#381050">
+						<?print $row["name_type"];?></font></a>
+				<?}?>
+			</ul>
+		</td>
+		<td width="50%" align="center" style="vertical-align: top; padding:30">
+			<font size="+2" color="#381050"><b>Поставщики:</b></font>
+			<ul>
+				<? while($row=mysql_fetch_array($resultSup)){?>
+					<li style="list-style: none"><a href="show.phtml?type=1&id_sup=
+						<?print $row["id_sup"];?>">
+						<font size="+2" color="#381050">
+						<?print $row["name_sup"];?></font>
+						<font size="+2" color="#381050">
+						<?print $row["country_sup"];?></font></a>
+				<?}?>
+			</ul>
+		</td>
+	</tr>
+</table>
+<? include("footer.phtml");
+	mysql_close();
+?>

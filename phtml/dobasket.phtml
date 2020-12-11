@@ -1,0 +1,58 @@
+<?
+	$type=$_GET["type"];
+	$id_bq=$_GET["id_bq"];
+	$id_bask=$_COOKIE["id_bask"];
+	
+	include("connect.phtml");
+	session_start();
+
+	if($type==1)
+	{
+		$strSQL="SELECT * FROM basket_bouq WHERE id_bq=".$id_bq." AND id_bask='".$id_bask."'";
+		$result=mysql_query($strSQL) or die ("Не получается выполнить запрос к корзине :(");
+		if ($row=mysql_fetch_array($result))
+		{
+			$strSQL="UPDATE basket_bouq SET kolvo=kolvo+1 WHERE id_bq=".$id_bq." AND id_bask='".$id_bask."'";
+		}
+		else
+		{
+			$strSQL="INSERT INTO basket_bouq (id_bask, id_bq, kolvo, date_bask) VALUES ('".$id_bask."', ".$id_bq.", 1, CURDATE())";
+		}
+		mysql_query($strSQL);
+	}
+	else
+	if($type==2)
+	{
+		$strSQL="SELECT * FROM basket_bouq WHERE id_bq=".$id_bq." AND id_bask='".$id_bask."'";
+		$result=mysql_query($strSQL) or die ("Не получается выполнить запрос к корзине :(");
+		if ($row=mysql_fetch_array($result))
+		{
+			if ($row["kolvo"]>1)
+			{
+				$strSQL="UPDATE basket_bouq SET kolvo=kolvo-1 WHERE id_bq=".$id_bq." AND id_bask='".$id_bask."'";
+			}
+			else
+			{
+				$strSQL="DELETE FROM basket_bouq WHERE id_bq=".$id_bq." AND id_bask='".$id_bask."'";
+			}
+		}
+		else
+		{
+			$strSQL="INSERT INTO basket_bouq (id_bask, id_bq, kolvo, date_bask) VALUES ('".$id_bask.";, ".$id_bq.", 1, CURDATE())";
+		}
+		mysql_query($strSQL);
+	}
+	else
+	if($type==3)
+	{
+		$strSQL="DELETE FROM basket_bouq WHERE id_bq=".$id_bq." AND id_bask='".$id_bask."'";
+		mysql_query($strSQL);
+	}
+	else
+	if($type==4)
+	{
+		$strSQL="DELETE FROM basket_bouq WHERE id_bask='".$id_bask."'";
+		mysql_query($strSQL);
+	}
+	include("basket.phtml");
+?>

@@ -1,0 +1,113 @@
+<?
+	$id_bask=$_COOKIE["id_bask"];
+	session_start();
+
+	$title="Ваш заказ";
+	include("header.phtml");
+	include("connect.phtml");
+	
+	$strSQL1="SELECT COUNT(*) as count FROM basket_bouq WHERE id_bask='".$id_bask."'";
+	$result=mysql_query($strSQL1) or die
+		("Не получается выполнить запрос к корзине :(");
+		$row=mysql_fetch_array($result);
+	if($row["count"]==0)
+	{?>
+		<table border="1" width="100%" align="right" style="position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)">
+			<tr>
+				<td align="center">
+					<b>Ваша корзина пуста!</b>
+				</td>
+			</tr>
+		</table>
+	<?
+	}
+	else
+	{
+		$strSQL1="SELECT name_bq, comp_bq, price_bq, image_bq, kolvo, id_bask, bouquets.id_bq FROM bouquets, basket_bouq WHERE bouquets.id_bq=basket_bouq.id_bq AND id_bask='".$id_bask."'";
+		$result1=mysql_query($strSQL1) or die("Не получается обратиться к корзине2 :(");
+	?>
+	<form method="get" action="doorder.phtml">
+		<table border="1" width="100%" align="right" style="position:absolute; top:80; left: 0%; background: rgb(216, 191, 216, 0.7); border-spacing: 7px; border-collapse: collapse;">
+			<tr>
+				<td align="center">
+					<i>Название:</i>
+				</td>
+				<td align="center">
+					<i>Описание:</i>
+				</td>
+				<td align="center">
+					<i>Цена:</i>
+				</td>
+				<td align="center">
+					<i>Количество:</i>
+				</td>
+			</tr>
+			<?
+			$sum=0;
+			while($row=mysql_fetch_array($result1))
+			{?>
+				<tr>
+					<td>
+						<?print $row["name_bq"];?>
+					</td>
+					<td>
+						<?print $row["comp_bq"];?>
+					</td>
+					<td align="right">
+						<?print $row["price_bq"];?>
+					</td>
+					<td align="center">
+						<?print $row["kolvo"];?>
+					</td>
+				</tr>
+				<?
+					$sum=$sum+$row["price_bq"]*$row["kolvo"];
+			}?>
+				<tr>
+					<td align="right"></td>
+					<td align="right">
+						<i>Итого: </i>
+					</td>
+					<td align="right"><i>
+						<?print $sum;?>
+					</i></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td colspan=4>
+						<b>Способ доставки:</b>
+						<input type="radio" value=1 name="delivery" checked>Почта России
+						<input type="radio" value=2 name="delivery">Курьер
+						<input type="radio" value=3 name="delivery">Самовывоз
+					</td>
+				</tr>
+				<tr>
+					<td colspan=4>Прислать бесплатный каталог по теме:
+						<select name="bonus">
+							<option value=0></option>
+							<? 
+								$strSQL1="SELECT * FROM flowertypes";
+								$result1=mysql_query($strSQL1) or die("Не получается выполнить запрос к таблице типов :(");
+								while($row=mysql_fetch_array($result1))
+								{?>
+							<option value="<?print $row["id_type"]?>">
+								<?print $row["name_type"];
+								}
+							?>
+							</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td colspan=4>
+						<center>
+							<input type="submit" name="Отправить заказ">
+						</center>
+					</td>
+				</tr>
+		</table>
+	</form>
+			<?
+	}
+	include("footer.phtml");
+?>

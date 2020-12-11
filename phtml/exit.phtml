@@ -1,0 +1,10 @@
+<?
+//	session_unregister("log");
+//	session_unregister("id");
+	session_start();
+	unset($_SESSION["log"]);
+	unset($_SESSION["id"]);
+	session_destroy();
+	
+	include("main.phtml");
+?>

@@ -1,0 +1,43 @@
+<?
+header("Cache-control: no-cashe");
+
+	$id_bask=$_COOKIE["id_bask"];
+	print $id_bask;
+	if (!isset($id_bask))
+	{
+		$uniq_ID=uniqid("ID");
+		setcookie("id_bask", $id_bask, time()+60*60*24*14);
+	}
+	else
+		setcookie("id_bask", $id_bask, time()+60*60*24*14);
+?>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+    <head>
+        <title>Цветочный бутик</title>
+    </head>
+    <body background="images1/pions.jpg" style="background-size:100%; background-repeat:repeat-y; " bgproperties="fixed">
+		<table width="100%" height="80" bgcolor="#4C154C" style="position:absolute;top:0;left:0;">
+			<tr>
+				<td align="center" width="20%"><a href="reg.phtml"><font color="#FFF5EE"><b>Регистрация</b></font></a></td>
+				<td align="center" width="20%"><a href="catalog.phtml"><font color="#FFF5EE"><b>Каталог</b></font></a></td>
+				<td align="center" width="20%"><a href="order.phtml"><font color="#FFF5EE"><b>Заказ</b></font></a></td>
+				<td align="center" width="20%"><a href="basket.phtml"><font color="#FFF5EE"><b>Корзина</b></font></a></td>
+				<td align="center" width="20%"><a href="exit.phtml"><font color="#FFF5EE"><b>Выход</b></font></a></td>
+			</tr>
+			<tr>
+				<td></td><td></td>
+				<td align="center"><font color="#FFF5EE"><b><?print $title?></b></font></td>
+				<td></td>
+				<td align="right">
+					<?
+						if(isset($_SESSION["log"]))
+						{?>
+							<a href="cabinet.phtml"><font size="-1" color="#FFF5EE"><b>
+							<?print $_SESSION["log"];?>
+							Личный кабинет</b></font></a>
+						<?}?>
+				</td>
+			</tr>
+		</table>

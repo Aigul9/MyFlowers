@@ -1,0 +1,54 @@
+<?
+	$title="Авторизация";
+	
+	$pass=$_POST["pass"];
+	$login=$_POST["login"];
+	
+	include("connect.phtml");
+
+	$strSQL1="SELECT * FROM customers WHERE login_='".$login."' AND pass='".$pass."'";
+	$result1=mysql_query($strSQL1) or die("Не получается выполнить запрос к авторизованным покупателям :(");
+	
+	if($row=mysql_fetch_array($result1))
+	{
+		session_start();
+//		session_register("log");
+		$_SESSION["log"]=$row["fio"];
+		
+//		session_register("id");
+		$_SESSION["id"]=$row["id_cust"];
+		
+		$message="
+			<table border='1' width='100%' align='right' style='position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)'>
+				<tr>
+					<td align='center'>
+						<b>Вы успешно авторизованы!</b>
+					</td>
+				</tr>
+			</table>";
+		$success=true;
+	}
+	else
+	{
+		$message="
+			<table border='1' width='100%' align='right' style='position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)'>
+				<tr>
+					<td align='center'>
+						<b>Неверный логин или пароль!</b>
+					</td>
+				</tr>
+			</table>";
+	}
+	
+	if($sucess)
+	{
+		include("cabinet.phtml");
+	}
+	else
+	{
+		include("header.phtml");
+		print	$message;
+		include("footer.phtml");
+	}
+?>
+	

@@ -1,0 +1,165 @@
+<?
+	$title="Личный кабинет";
+	session_start();
+	$log=$_SESSION["log"];
+	$id=$_SESSION["id"];
+	
+	if(!isset($log))
+	{
+		$success=false;
+		$message="
+			<table border='1' width='100%' align='right' style='position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)'>
+				<tr>
+					<td align='center'>
+						<b>Вы не авторизованы!</b>
+					</td>
+				</tr>
+			</table>";
+	}
+	else
+		$success=true;
+	
+	include("header.phtml");
+	print $message;
+	
+	if($success)
+	{
+		include("connect.phtml");
+		$strSQL="SELECT * FROM customers WHERE id_cust='".$id."'";
+		$result=mysql_query($strSQL) or die("Не получается выполнить запрос к покупателям :(");
+		if($row=mysql_fetch_array($result))
+		{
+?>
+
+<form action="change.phtml" method="post">
+	<table width="100%" style="position:absolute; top:80; left:0; background: rgb(216, 191, 216, 0.7); border-spacing: 7px;">
+		<tr>
+			<td align="right" width="30%"> 
+				<font size="+1" color="#FFF5EE" style="text-shadow: #4C154C 0 0 2px;"><b>ФИО:</b></font>
+			</td>
+			<td>
+				<input type=text name=fio value="<?print $row["fio"]?>" style="width:250; height:25;">
+			</td>
+		</tr>
+		<tr>
+			<td align="right">
+				<font size="+1" color="#FFF5EE" style="text-shadow: #4C154C 0 0 2px;"><b>Адрес:</b></font>
+			</td>
+			<td>
+				<input type="text" name="addr" value="<?print $row["addr"]?>" style="width:250; height:25;">
+			</td>
+		</tr>
+		<tr>
+			<td align="right">
+				<font size="+1" color="#FFF5EE" style="text-shadow: #4C154C 0 0 2px;"><b>E-mail:</b></font>
+			</td>
+			<td>
+				<input type=text name=email value="<?print $row["email"]?>" style="width:250; height:25;">
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+				<i><input type="checkbox" value="1" name="subsctibe"
+				<? if($row["subscribe"]==1) print "checked"; ?>>
+				<i>Подписаться на дайджест</i></i>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+				<input type="submit" value="Сохранить изменения">
+			</td>	
+		</tr>
+	</table>
+</form>
+<table width="100%" style="position:absolute; top:243; left:0; background: rgb(216, 191, 216, 0.7); border-spacing: 0px; padding: 5px">
+	<tr>
+		<td colspan=4>
+			<font size="+2" color="#381050">
+				<b>Мои заказы</b>
+			</font>
+			<?
+				$strSQL1="SELECT id_order, date_order FROM orders WHERE id_cust='".$id."' ORDER BY date_order DESC";
+				$result1=mysql_query($strSQL1) or die("Не получается выполнить запрос к заказам :(");
+				while($row1=mysql_fetch_array($result1))
+				{
+					$order=$row1["id_order"];
+					$strSQL2="SELECT name_bq, comp_bq, price_bq, kolvo, id_order, bouquets.id_bq FROM bouquets, order_bouq WHERE bouquets.id_bq=order_bouq.id_bq AND id_order='".$order."'";
+					$result2=mysql_query($strSQL2) or die("Не получается выполнить запрос к заказам2 :(");
+			?>
+		</td>
+	</tr>
+	<tr>
+		<td colspan=4>
+			<font color="#381050">
+				<b>Заказ №<?=$order?> от <?=$row1["date_order"]?></b>
+			</font>
+		</td>
+	</tr>
+	<tr>
+		<td width="20%">
+			<i>Название:</i>
+		</td>
+		<td width="50%">
+			<i>Описание:</i>
+		</td>
+		<td width="15%">
+			<i>Цена:</i>
+		</td>
+		<td width="15%">
+			<i>Количество:</i>
+		</td>
+	</tr>
+	<?
+		$sum=0;
+		while($row2=mysql_fetch_array($result2))
+		{
+			?>
+				<tr>
+					<td>
+						<?print $row2["name_bq"];?>
+					</td>
+					<td>
+						<?print $row2["comp_bq"];?>
+					</td>
+					<td>
+						<?print $row2["price_bq"];?>
+					</td>
+					<td>
+						<?print $row2["kolvo"];?>
+					</td>
+				</tr>
+			<? $sum=$sum+$row2["price_bq"]*$row2["kolvo"];
+		}
+		$strSQL3="SELECT * FROM flowertypes, orders WHERE flowertypes.id_type=orders.bonus AND id_order='".$order."'";
+		$result3=mysql_query($strSQL3) or die("Не получается выполнить запрос к типам3 :(");
+		if($row3=mysql_fetch_array($result3))
+		{?>
+	<tr>
+		<td colspan=2>Бесплатный каталог по теме
+			<b>
+				<?print $row3["name_type"];?>
+			</b>
+		</td>
+		<td>0</td>
+		<td>1</td>
+	</tr>
+	<?}?>
+	<tr>
+		<td style="border-bottom: 1px solid #800080"></td>
+		<td align="right" style="border-bottom: 1px solid #800080">
+			<i>Итого:</i>
+		</td>
+		<td style="border-bottom: 1px solid #800080" colspan=2><i>
+			<?print $sum;?>
+		</i><td>
+	</tr>
+		<?}?>
+</table>
+	<?}
+	mysql_close();
+}
+
+include("footer.phtml");
+?>

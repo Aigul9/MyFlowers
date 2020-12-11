@@ -1,0 +1,150 @@
+<?
+	$title="Регистрация";
+	
+	$fio=$_POST["fio"];
+	$addr=$_POST["addr"];
+	$email=$_POST["email"];
+	$pass=$_POST["pass"];
+	$pass2=$_POST["pass2"];
+	$login=$_POST["login"];
+	$type=$_POST["type"];
+	$subscribe=$_POST["subscribe"];
+	
+	include("connect.phtml");
+	
+	if($type==1)
+	{
+		if($fio!="" && $addr!="" && $email!="" && $login!="" && $pass!="" && $pass2!="")
+		{
+			if($pass!=$pass2)
+			{
+				$message="
+					<table border='1' width='100%' align='right' style='position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)'>
+						<tr>
+							<td align='center'>
+								<b>Пароли не совпадают!</b>
+							</td>
+						</tr>
+					</table>";
+			}
+			else
+			{
+				$strSQL1="SELECT id_cust FROM customers WHERE login_='".$login."'";
+				$result1=mysql_query($strSQL1) or die ("Не получается выполнить запрос к покупателям :(");
+				if($row=mysql_fetch_array($result1))
+				{
+					$message="
+						<table border='1' width='100%' align='right' style='position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)'>
+						<tr>
+							<td align='center'>
+								<b>Покупатель с таким логином уже существует! Выберите другой логин.</b>
+							</td>
+						</tr>
+					</table>";
+				}
+				else{
+					$strSQL1="INSERT INTO customers (login_, pass, fio, addr, email, subscribe) VALUES('".$login."',  '".$pass."', '".$fio."', '".$addr."', '".$email."', '".$subscribe."')";
+					$result=mysql_query($strSQL1) or die("Не получается добавить пользователя :(");
+					$message="
+						<table border='1' width='100%' align='right' style='position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)'>
+						<tr>
+							<td align='center'>
+								<b>Вы успешно зарегистрированы!</b>
+							</td>
+						</tr>
+					</table>";
+					$success=true;
+				}
+			}
+		}
+		else
+			$message="
+				<table border='1' width='100%' align='right' style='position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)'>
+						<tr>
+							<td align='center'>
+								<b>Заполните все поля!</b>
+							</td>
+						</tr>
+					</table>";
+	}
+	
+	include("header.phtml");
+	print $message;
+	
+	if(!$success)
+	{
+?>	
+<form action="reg.phtml" method="post">
+	<center>
+		<table border="0" style="position:relative; top:160;">
+			<tr>
+				<td align="right">
+					<font size="+1" color="#FFF5EE" style="text-shadow: #4C154C 0 0 2px;"><b>ФИО:</b></font>
+				</td>
+				<td>
+					<input type=text name=fio value="<?print $fio?>" style="width:250; height:25;">
+				</td>
+			</tr>
+			<tr>
+				<td align="right">
+					<font size="+1" color="#FFF5EE" style="text-shadow: #4C154C 0 0 2px;"><b>Адрес:</b></font>
+				</td>
+				<td>
+					<input type="text" name="addr" value="<?print $addr?>" style="width:250; height:25;">
+				</td>
+			</tr>
+			<tr>
+				<td align="right">
+					<font size="+1" color="#FFF5EE" style="text-shadow: #4C154C 0 0 2px;"><b>E-mail:</b></font>
+				</td>
+				<td>
+					<input type=text name=email value="<?print $email?>" style="width:250; height:25;">
+				</td>
+			</tr>
+			<tr>
+				<td align="right">
+					<font size="+1" color="#FFF5EE" style="text-shadow: #4C154C 0 0 2px;"><b>Логин:</b></font>
+				</td>
+				<td>
+					<input type=text name=login value="<?print $login?>" style="width:250; height:25;">
+				</td>
+			</tr>
+			<tr>
+				<td align="right">
+					<font size="+1" color="#FFF5EE" style="text-shadow: #4C154C 0 0 2px;"><b>Пароль:</b></font>
+				</td>
+				<td>
+					<input type=password name=pass value="" style="width:250; height:25;">
+				</td>
+			</tr>
+			<tr>
+				<td align="right">
+					<font size="+1" color="#FFF5EE" style="text-shadow: #4C154C 0 0 2px;"><b>Повтор пароля:</b></font>
+				</td>
+				<td>
+					<input type=password name=pass2 value="" style="width:250; height:25;">
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<input type="checkbox" value="1" name="subscribe">
+					<i>Подписаться на дайджест</i>
+				</td>
+			</tr>
+			<input type=hidden value=1 name=type>
+			<tr>
+				<td align="right"></td>
+				<td>
+					<input type="submit" value="Отправить">
+				</td>
+			</tr>
+		</table>
+	</center>
+</form>
+<?
+	mysql_close();
+	}
+	include("footer.phtml");
+?>
+			

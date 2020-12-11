@@ -1,0 +1,40 @@
+<?
+	$title="Регистрация";
+	session_start();
+	$fio=$_POST["fio"];
+	$addr=$_POST["addr"];
+	$email=$_POST["email"];
+	$type=$_POST["type"];
+	$subscribe=$_POST["subscribe"];
+	$id=$_SESSION["id"];
+	
+	include("connect.phtml");
+	
+	if($fio!="" && $addr!="" && $email!="")
+	{
+		$strSQL1="UPDATE customers SET fio='".$fio."', addr='".$addr."', email='".$email."', subscribe='".$subscribe."' WHERE id_cust=".$id;
+		$result1=mysql_query($strSQL1) or die("Не получается выполнить запрос к таблице покупателей :(");
+		$_SESSION["log"]=$fio;
+		$message="
+			<table border='1' width='100%' align='right' style='position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)'>
+				<tr>
+					<td align='center'>
+						<b>Данные обновлены.</b>
+					</td>
+				</tr>
+			</table>";
+	}
+	else
+		$message="
+			<table border='1' width='100%' align='right' style='position:absolute; top:80; left: 0%; background: rgb(216, 191, 216)'>
+				<tr>
+					<td align='center'>
+						<b>Не все поля заполнены!</b>
+					</td>
+				</tr>
+			</table>";
+			
+	include("header.phtml");
+	print $message;
+	include("footer.phtml");
+?>
