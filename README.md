@@ -1,3 +1,3 @@
 # My Flowers
 
-Online flowers store in php and html made for educational purposes.
+Online flowers store in PHP and HTML made for educational purposes.
